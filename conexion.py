@@ -21,7 +21,7 @@ cursor.execute("SELECT @@VERSION")
 resultado = cursor.fetchall()
 print(resultado)
 
-# --- Extracción (Extract) ---
+# # ----------------------   PARTE 1 EXTRACT (Extraemos los datos de la API)    --------------------------------------------------------------------------------
 # Endpoint público de CoinGecko que devuelve datos de mercado de criptomonedas. No requiere API key para uso liviano dentro de los límites gratuitos.
 
 url = "https://api.coingecko.com/api/v3/coins/markets"
@@ -49,7 +49,7 @@ df = pd.DataFrame(data)
 print(df.head())
 print(df.columns.to_list())
 
-# ----------------------   PARTE 1 TRANSFORM (Transformación de datos)    ------------------------------------------------------------------------------
+# ----------------------   PARTE 2 TRANSFORM (Transformación de datos)    ------------------------------------------------------------------------------
 # Me quedo solo con las columnas relevantes para el análisis de precios. Se descartan columnas como 'roi' (estructura anidada, muchos valores nulos)
 # .copy() asegura que df_final sea un DataFrame independiente
 
@@ -62,7 +62,7 @@ df_final = df[['id', 'symbol', 'name', 'current_price', 'market_cap', 'total_vol
 
 df_final['fecha_captura'] = datetime.now()
 
-# ----------------------   PARTE 2 LOAD (Carga de datos en SQL Server)    --------------------------------------------------------------------------------
+# ----------------------   PARTE 3 LOAD (Carga de datos en SQL Server)    --------------------------------------------------------------------------------
 
 # Ahora creo la tabla de staging en SQL SERVER para almacenar los datos crudos.
 
