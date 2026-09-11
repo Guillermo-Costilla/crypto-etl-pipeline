@@ -1,0 +1,35 @@
+name: Extraccion Horaria Cripto
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  extraer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Instalar driver ODBC de Microsoft para SQL Server
+        run: |
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+
+      - name: Instalar dependencias de Python
+        run: pip install requests pandas pyodbc python-dotenv
+
+      - name: Ejecutar script de extracción
+        run: python extraer_cargar.py
+        env:
+          DB_SERVER: ${{ secrets.DB_SERVER }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_UID: ${{ secrets.DB_UID }}
+          DB_PWD: ${{ secrets.DB_PWD }}
