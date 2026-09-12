@@ -94,6 +94,11 @@ try:
         ))
     registrar_log("Carga completada exitosamente")
     conexion.commit()  # confirma las 20 inserciones en la base
+
+# --- Transform: mover los datos de staging al esquema estrella ---
+    cursor.execute("EXEC TransformarStaging")
+    conexion.commit()
+    registrar_log("Transformacion a esquema estrella completada")
 except Exception as error:
     registrar_log(f"ERROR en la carga: {error}")
     conexion.rollback()  # si hay error, deshace los cambios
