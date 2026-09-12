@@ -1,4 +1,4 @@
-# Crypto ETL Pipeline
+# Crypto ELT Pipeline
 
 Pipeline de datos automatizado que extrae precios de criptomonedas en tiempo real, los transforma en un esquema estrella y los deja listos para análisis en Power BI — corriendo solo, en la nube, sin depender de que ninguna PC esté encendida.
 
