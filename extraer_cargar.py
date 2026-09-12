@@ -5,8 +5,12 @@ import pandas as pd
 import pyodbc
 from dotenv import load_dotenv
 import os
+import time
     
 load_dotenv()
+
+MAX_INTENTOS = 3
+ESPERA_ENTRE_INTENTOS = 20  # segundos
 
 servidor = os.getenv('DB_SERVER')
 base = os.getenv('DB_DATABASE')
@@ -23,23 +27,26 @@ def registrar_log(mensaje):
         archivo.write(f"{datetime.now()} - {mensaje}\n")
 
 # --- Conexión a SQL Server ---
-try:
-    conexion = pyodbc.connect(
-    'DRIVER={ODBC Driver 18 for SQL Server};'
-    f'SERVER={servidor};'
-    f'DATABASE={base};'
-    f'UID={usuario};'
-    f'PWD={contraseña};'
-    'Encrypt=yes;'
-    'TrustServerCertificate=no;'
-    'Connection Timeout=30;'
-    )
-    cursor = conexion.cursor()
-    registrar_log("Conexión a SQL Server (Azure) exitosa")
-except Exception as error:
-    registrar_log(f"ERROR de conexión: {error}")
-    sys.exit(1)
-    # si no hay conexión, no tiene sentido seguir con el resto del script
+for intento in range(1, MAX_INTENTOS + 1):
+    try:
+        conexion = pyodbc.connect(
+            'DRIVER={ODBC Driver 18 for SQL Server};'
+            f'SERVER={servidor};'
+            f'DATABASE={base};'
+            f'UID={usuario};'
+            f'PWD={contraseña};'
+            'Encrypt=yes;'
+            'TrustServerCertificate=no;'
+            'Connection Timeout=30;'
+        )
+        cursor = conexion.cursor()
+        registrar_log("Conexión a SQL Server (Azure) exitosa")
+        break
+    except Exception as error:
+        registrar_log(f"ERROR de conexión (intento {intento}/{MAX_INTENTOS}): {error}")
+        if intento == MAX_INTENTOS:
+            sys.exit(1)
+        time.sleep(ESPERA_ENTRE_INTENTOS)
 
 
 # ----------------------   PARTE 1 EXTRACT (Extraemos los datos de la API)    --------------------------------------------------------------------------------
