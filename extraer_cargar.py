@@ -18,6 +18,7 @@ url = "https://api.coingecko.com/api/v3/coins/markets"
 
 # Función chica que registra un mensaje en un archivo de log, agregando la fecha y hora automáticamente
 def registrar_log(mensaje):
+    print(mensaje)  # para que aparezca en los logs de GitHub Actions
     with open("log_pipeline.txt", "a") as archivo:
         archivo.write(f"{datetime.now()} - {mensaje}\n")
 
